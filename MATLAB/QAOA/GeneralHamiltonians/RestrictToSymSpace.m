@@ -1,10 +1,13 @@
-function [Vsym, Dsym, Hsym] = RestrictToSymSpace(H, flagSym)
+function [Hsym, Vsym, Dsym] = RestrictToSymSpace(H, flagSym)
 %RestrictToSymSpace compute the symmetric subspace eigenvectors, eigenvalues
 %   and effective Hamiltonian in the input N-qubit Hamiltonian that has Z_2
 %   symmetry with respect to flipping of all spins: [X^{\otimes N}, H]=0
 %
-%   [Vsym, Dsym, Hsym] = RestrictToSymSpace(H)
-%   Vsym, Hsym are 2^{N-1}-dimensional matrices,
+%   Usage:
+%       Hsym = RestrictToSymSpace(H)
+%       [Hsym, Vsym, Dsym] = RestrictToSymSpace(H)
+%
+%   Hsym, Vsym are 2^{N-1}-dimensional matrices,
 %   and Dsym is 2^{N-1} x 1 vector of eigenvalues
 %
 %   Explanation: Let P=X^{\otimes (N-1)}
@@ -29,9 +32,11 @@ if flagSym % work in symmetric subspace eig(X^{\otimes N}) = +1
 else % work in asymmetric subspace eig(X^{\otimes N}) = -1
     Hsym = H(1:end/2, 1:end/2) - fliplr(H(1:end/2, end/2+1:end));
 end
-[Vsym, Dsym] = eig(full(Hsym));
-Dsym = diag(Dsym);
 
+if nargout > 1
+    [Vsym, Dsym] = eig(full(Hsym));
+    Dsym = diag(Dsym);
+end
 
 end
 

@@ -1,13 +1,17 @@
 
-N = 9;
+N = 11;
 
 maxP = 50;
 
-figind = 1; % index of figure to plot
+figind = 3; % index of figure to plot
 
 Delta = -3/4; % gapless = -3/4, gapped = -7/4
 
 p_threshold_for_guess = 6; % needs to be <= 6
+
+nOverlapsToStore = 3; % number of state overlaps to store
+
+USE_INVERSION_SYM = true;
 
 %% Set up Hamiltonian
 sx = sparse([0,1; 1,0]);
@@ -21,22 +25,58 @@ for ind = 1:N-1
         Ham2LTerm(sy, sy, ind, ind+1, N) + Delta*Ham2LTerm(sz, sz, ind, ind+1, N);
 end
 
-% work with only first half of the Hilbert space due to X^{\otimes N} symmetry
+psi0 = ones(2^N,1)/sqrt(2^N);
+
 tic;
-[Vsym, Dsym, Hsym] = RestrictToSymSpace(HamC, true);
-fprintf('Finished diagonalizing after %0.2f sec\n', toc);
+if N <= 12 && ~USE_INVERSION_SYM
+    [HCsym, Vsym, Dsym] = RestrictToSymSpace(HamC, true);
+    fprintf('Finished diagonalizing after %0.2f sec\n', toc);
+    
+    
+%     Vsub = [speye(2^(N-1)); flipud(speye(2^(N-1)))]/sqrt(2);
+%     psi0 = Vsub'*psi0;
+    psi0 = ones(2^(N-1),1)/sqrt(2^(N-1));
+    
+    EvolC = @(psi, gamma) Vsym*(exp(-1i*gamma*Dsym).*(Vsym'*psi));
+    EvolB = @(psi, beta) EvolHamB(N, beta, psi, true);
+    
+    % anonymous function for feeding into optimization (fminunc)
+    QAOAhelperfcn = @(p, param) GenQAOAGradSmall(N, p, HCsym, Vsym, Dsym, param, true);
+    
+    E_GS = Dsym(1); % ground state energy
+    E_1E = Dsym(2); % 1st excited state energy
+    V_C = Vsym(:, 1:nOverlapsToStore);
+else
+    % further reduce Hilbert space size using inversion symmetry
+    % (but HamB evolution won't work as nicely)
+    [HCsym, HBsym, Vsub] = RestrictToSymPlusInversion(N, HamC);
+    
+    psi0 = Vsub'*psi0;
+    
+    
+    EvolC = @(psi, gamma) expmv(-1i*gamma, HCsym, psi);
+    EvolB = @(psi, beta) expmv(-1i*beta, HBsym, psi);
+    
+    % anonymous function for feeding into optimization (fminunc)
+    QAOAhelperfcn = @(p, param) GenQAOAGrad(p, HCsym, HBsym, param, psi0, EvolC, EvolB);
+    
+    
+    % getting lowest eigenstates and eigenvalues
+    temp = N^2*speye(length(HCsym)) - HCsym;
+    [V_C, Dsym] = eigs(temp, nOverlapsToStore, 'lm');
+    
+    Dsym = N^2 - diag(Dsym);
+    E_GS = Dsym(1); % ground state energy
+    E_1E = Dsym(2); % 1st excited state energy
+end
 
 
-E_GS = Dsym(1); % ground state energy
-E_1E = Dsym(2); % 1st excited state energy
+%% run QAOA with heuristically guessed initial parameters and educated interpolation strategy
 
 options = optimoptions('fminunc','GradObj','on','Hessian','off','Display','off',...
     'TolX',1e-6,'TolFun',1e-6, 'Algorithm', 'quasi-newton',...
     'MaxFunEvals', Inf, 'MaxIter', Inf);
 
-%% educated interpolation strategy
-
-nOverlapsToStore = 7; % number of state overlaps to store
 
 energyEd = nan(maxP, 1);
 paramEd = cell(maxP, 1);
@@ -45,9 +85,6 @@ exitflagEd = nan(maxP, 1);
 realTimeEd = nan(maxP, 1);
 outputEd = cell(maxP,1);
 nFuncEvalEd = nan(maxP, 1);
-
-
-%% run QAOA with heuristically guessed initial parameters
 
 XXZN8 = load('data/XXZ_n=8_best.mat');
 % mySymmetry = 'TR+Z2';
@@ -62,7 +99,7 @@ for p = 1:maxP
     end
 
 
-    myfun = @(param) GenQAOAGrad(N,p, Hsym, Vsym, Dsym, param, true);
+    myfun = @(param) QAOAhelperfcn(p, param);
 
     
     tic;
@@ -93,10 +130,9 @@ for p = 1:maxP
     
     %%
     energyEd(p) = Emin;
-    [~, psiout] = GenQAOA(N, p, Hsym, Vsym, Dsym, paramEd{p}, true);
+    [~, psiout] = GenQAOA(p, HCsym, paramEd{p}, psi0, EvolC, EvolB);
     
-    temp = abs(Vsym'*psiout).^2;
-    overlapsEd(p, :) = temp(1:nOverlapsToStore);
+    overlapsEd(p, :) = abs(V_C'*psiout).^2;
     
     figure(figind)
     subplot(2,1,1);
@@ -114,7 +150,7 @@ for p = 1:maxP
     grid on
     xlabel('p');
     ylabel('eigenstates population');
-    legend('Ground','1st Excited','2nd Excited', 'location','northwest');
+    legend('Ground','1st Excited', 'location','northwest');
     set(gca,'xlim',[1,maxP]);
 
     %%
@@ -148,4 +184,4 @@ set(gca,'ylim',[0,1]);
 
 %%
 
-% save(sprintf('data/n=%d_Ed.mat',N), 'maxP','energyEd','overlapsEd','paramEd', 'exitflagEd', 'realTimeEd','nFuncEvalEd');
+save(sprintf('data/n=%d_Ed.mat',N), 'maxP','energyEd','overlapsEd','paramEd', 'exitflagEd', 'realTimeEd','nFuncEvalEd');
