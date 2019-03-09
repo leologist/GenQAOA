@@ -1,4 +1,4 @@
-function [F, F_grad] = GenQAOAGrad(p, HamC, HamB, param, psi_in, EvolC, EvolB)
+function [F, F_grad, psi] = GenQAOAGrad(p, HamC, HamB, param, psi_in, EvolC, EvolB)
 %GenQAOAGrad performs QAOA circuit with general Hamiltonian, and computes
 %gradient
 %
@@ -36,27 +36,31 @@ if nargin < 7
     EvolB = @(psi, beta) expmv(-1i*beta, HamB, psi);
 end
 
-psi_p = zeros(numel(psi_in), 2*p+2);
-psi_p(:,1) = psi_in; clear psi_in;
+psi = zeros(numel(psi_in), 2*p+2);
+psi(:,1) = psi_in; clear psi_in;
 
 for ind = 1:p
-    psi_p(:,ind+1) = EvolB(EvolC(psi_p(:,ind), gammas(ind)), betas(ind));
+    psi(:,ind+1) = EvolB(EvolC(psi(:,ind), gammas(ind)), betas(ind));
 end
 
-psi_p(:,p+2) = HamC*psi_p(:, p+1);
+psi(:,p+2) = HamC*psi(:, p+1);
 
 for ind = 1:p
-    psi_p(:, ind+p+2) = EvolC(EvolB(psi_p(:,ind+p+1), -betas(p+1-ind)), -gammas(p+1-ind));
+    psi(:, ind+p+2) = EvolC(EvolB(psi(:,ind+p+1), -betas(p+1-ind)), -gammas(p+1-ind));
 end
 
-F = real(psi_p(:,p+1)'*psi_p(:,p+2));
+F = real(psi(:,p+1)'*psi(:,p+2));
 
 
 for ind = 1:p
-    F_grad(ind) = psi_p(:,ind)'*(1i*HamC*psi_p(:,2*p+3-ind));
-    F_grad(p+ind) = psi_p(:,ind+1)'*1i*HamB*psi_p(:,2*p+2-ind);
+    F_grad(ind) = psi(:,ind)'*(1i*HamC*psi(:,2*p+3-ind));
+    F_grad(p+ind) = psi(:,ind+1)'*1i*HamB*psi(:,2*p+2-ind);
 end
 
-F_grad = 2*real(F_grad); % derivative has two parts 
+F_grad = 2*real(F_grad); % derivative has two parts
+
+if nargout >= 3
+    psi = psi(:,p+1); % output the state at the end of evolution
+end
 
 end

@@ -8,7 +8,7 @@ function [HCsym, HBsym, Vsub] = RestrictToSymPlusInversion(N, HamC)
 %       note dimension of symmetric subspace is
 %       dimH = 2^(floor(N/2)) + (2^(N-1)-2^(floor(N/2))/2
 %
-%   Vsub is a 2^N by dimH matrix, listing the orthogonormal basis vector of
+%   Vsub is a 2^N by dimH matrix, listing the orthonormal basis vector of
 %   symmetric subspace in the original 2^N-dimension Hilbert space. 
 %   e.g. Vsub*Vsub' is the projector onto the symmetric subspace
 %
@@ -50,7 +50,8 @@ HamBSub = reduceSym(HamB);
 HBsym = Vsub'*HamBSub*Vsub;
 HCsym = Vsub'*Hsym*Vsub;
 
-% Vsub = [speye(2^(N-1)); kronrec(sx, N-1)]*Vsub/sqrt(2);
+% generate the basis vectors in the full Hilbert space
 Vsub = [Vsub; flipud(Vsub)]/sqrt(2);
+% or equivalently, Vsub = [speye(2^(N-1)); kronrec(sx, N-1)]*Vsub/sqrt(2);
 
 end
