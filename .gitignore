@@ -1,3 +1,5 @@
 *.m~
 *.asv
 *.DS_Store
+*.mat
+*.log

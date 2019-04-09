@@ -1,0 +1,14 @@
+CCLS_to_akmaxsat is a combination of the stochastic local search solver CCLS and the complete solver akmaxsat. The procedures of CCLS_to_akmaxsat are described as follows.
+
+1. CCLS_to_akmaxsat first utilizes CCLS to find an upper bound and the corresponding assignment.
+
+2. CCLS_to_akmaxsat then passes the upper bound and the corresponding assignment to akmaxsat, and finally calls akmaxsat to solve the instance.
+
+
+Authors: Chuan Luo [1], Shaowei Cai [2], Kaile Su [3], Wei Wu [1], Zhong Jie [4]
+
+Institutes: [1] Key laboratory of High Confidence Software Technologies, Peking University, Beijing, China
+            [2] State Key Laboratory of Computer Science, Institute of Software, Chinese Academy of Sciences, Beijing, China
+            [3] Institute for Integrated and Intelligent Systems, Griffith University, Brisbane, Australia
+            [4] NetEase, Inc., Hangzhou, China
+            
