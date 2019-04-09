@@ -60,6 +60,8 @@ int main(int argc, char **argv)
     std::cout << "c ** Total CCLS2ak time = "
     << std::chrono::duration_cast<std::chrono::milliseconds>(time_fin-time_start).count()
     << " milliseconds\n";
+    my_command = "rm -f " + my_result_file;
+    system(my_command.c_str());
     // Leo's addition ends
 	
 	return 0;
