@@ -17,8 +17,9 @@
 */
 
 //Leo's addition
-#include <unistd.h> // for getpid()
-#include <chrono> // for timing
+#include <unistd.h>       // for getpid()
+#include <sys/time.h>     // for timing
+#include <sys/resource.h> // for timing
 
 //Original starts
 #include <string.h>
@@ -456,8 +457,8 @@ goback:
 
 int main(int argc, char **argv) {
 	srand(time(0));
-    auto time_start = std::chrono::high_resolution_clock::now(); // Leo's addition starts - timing starts
-    
+    struct rusage starttime, endtime;   // Leo: declare rusage variables
+    getrusage(RUSAGE_SELF, &starttime); // Leo: Get start time
 	if (argc < 2) {
 		printf("usage: %s <cnf-file> [upper bound file]\n", argv[0]);
 		return 1;
@@ -549,10 +550,14 @@ int main(int argc, char **argv) {
 	fast_backtrack(cf);
 #endif
     // Leo's addition starts
-    auto time_fin = std::chrono::high_resolution_clock::now();
-    std::cout << "c ** akmaxsat time = "
-    << std::chrono::duration_cast<std::chrono::milliseconds>(time_fin-time_start).count()
-    << " milliseconds\n";
+    getrusage(RUSAGE_SELF, &endtime); // Leo: Get end time
+    int sec_0 = (int) starttime.ru_utime.tv_sec;
+    int usec_0 = (int) starttime.ru_utime.tv_usec; //microsecs
+    int sec = (int) endtime.ru_utime.tv_sec;
+    int usec = (int) endtime.ru_utime.tv_usec; //microsecs
+    double runTime = (double) (sec - sec_0) + (double) (usec - usec_0) / 1000000.0;
+    cout.precision(12);
+    cout << "c ** akmaxsat time = " << fixed << runTime << " seconds" << endl;
     // Leo's addition ends
 	cf.printSolution();
 	return 0;

@@ -3,7 +3,7 @@
 #include <time.h>
 #include <sys/times.h> //these two h files are for linux
 #include <unistd.h>
-#include <chrono> // Leo added for precision timing
+#include <sys/resource.h> // Leo added for timing
 
 unsigned long long step;
 struct tms start, stop;
@@ -203,7 +203,8 @@ int main(int argc, char* argv[])
 	else max_flips = 500000;
 	//max_flips = 1000000;
 	
-    auto time_start = std::chrono::high_resolution_clock::now(); // Leo's addition starts - timing starts
+    struct rusage starttime, endtime;   // Leo: declare rusage variables
+    getrusage(RUSAGE_SELF, &starttime); // Leo: Get start time
     
 	select_prob_and_method();
 	
@@ -223,10 +224,13 @@ int main(int argc, char* argv[])
 		printf("\n");
 	}
     // Leo's addition starts
-    auto time_fin = std::chrono::high_resolution_clock::now();
-    std::cout << "c ** CCLS time = "
-    << std::chrono::duration_cast<std::chrono::milliseconds>(time_fin-time_start).count()
-    << " milliseconds\n";
+    int sec_0 = (int) starttime.ru_utime.tv_sec;
+    int usec_0 = (int) starttime.ru_utime.tv_usec; //microsecs
+    int sec = (int) endtime.ru_utime.tv_sec;
+    int usec = (int) endtime.ru_utime.tv_usec; //microsecs
+    double runTime = (double) (sec - sec_0) + (double) (usec - usec_0) / 1000000.0;
+    cout.precision(12);
+    cout << "c ** CCLS time = " << fixed << runTime << " seconds" << endl;
     // Leo's addition ends
 
     

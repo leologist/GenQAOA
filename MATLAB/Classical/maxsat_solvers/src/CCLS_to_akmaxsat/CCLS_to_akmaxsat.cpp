@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <chrono> // Leo added for precision timing
+#include <sys/time.h> // Leo added for timing
 
 using namespace std;
 
@@ -43,9 +43,10 @@ int main(int argc, char **argv)
 	my_result_file = "ccls_res_" + my_pid_str + "_" + my_time_str;
 	my_command = "./CCLS2014 " + my_instance + " 1 10 > ./" + my_result_file;
 	
-    auto time_start = std::chrono::high_resolution_clock::now(); // Leo's addition starts - timing starts
 	cout<<"c "<<my_command<<endl;
 	printf("c start CCLS\n");
+    struct timeval start, end; // Leo: set up timeval variables (note rusage doesn't work to time system(**) commands)
+    gettimeofday(&start, NULL);    // Leo: get start time
 	system(my_command.c_str());
 	printf("c stop CCLS\n");
 	
@@ -54,12 +55,12 @@ int main(int argc, char **argv)
 	cout<<"c "<<my_command<<endl;
 	printf("c start akmaxsat\n");
 	system(my_command.c_str());
+    gettimeofday(&end, NULL); // Leo: get end time
 	printf("c stop akmaxsat\n");
     // Leo's addition starts
-    auto time_fin = std::chrono::high_resolution_clock::now();
-    std::cout << "c ** Total CCLS2ak time = "
-    << std::chrono::duration_cast<std::chrono::milliseconds>(time_fin-time_start).count()
-    << " milliseconds\n";
+    double runTime = (double)(end.tv_sec - start.tv_sec) + (double) (end.tv_usec - start.tv_usec)*1e-6;
+    cout.precision(12);
+    cout << "c ** Total CCLS2ak time = " << fixed << runTime << " seconds" << endl;
     my_command = "rm -f " + my_result_file;
     system(my_command.c_str());
     // Leo's addition ends
