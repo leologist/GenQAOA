@@ -40,7 +40,7 @@ end
 for row = 1:size(J,1)
     if J(row, 3) > 0
         fprintf(fileID, '%d %d %d 0\n', J(row, 3), -J(row,1), -J(row,2));
-    else
+    elseif J(row, 3) < 0
         fprintf(fileID, '%d %d %d 0\n', -J(row, 3), J(row,1), J(row,2));
         fprintf(fileID, '%d %d %d 0\n', -J(row, 3), -J(row,1), J(row,2));
         fprintf(fileID, '%d %d %d 0\n', -J(row, 3), J(row,1), -J(row,2));
