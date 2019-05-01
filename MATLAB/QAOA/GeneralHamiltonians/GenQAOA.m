@@ -1,4 +1,4 @@
-function [F, psi] = GenQAOA(p, HamC, param, psi, EvolC, EvolB)
+function [F, psi] = GenQAOA(p, HamObj, param, psi, EvolC, EvolB)
 %GenQAOA performs QAOA circuit with general Hamiltonian
 %
 %   [F, psi] = GenQAOA(p, HamC, param, psi, EvolC, EvolB)
@@ -16,15 +16,15 @@ function [F, psi] = GenQAOA(p, HamC, param, psi, EvolC, EvolB)
 gammas = param(1:p);
 betas = param(p+1:end);
 
-if nargin < 6
-    psi = 1/sqrt(length(HamC))*ones(length(HamC),1);
+if isempty(psi)
+    psi = 1/sqrt(length(HamObj))*ones(length(HamObj),1);
 end
     
 for ind = 1:p
     psi = EvolB(EvolC(psi, gammas(ind)), betas(ind));
 end
 
-F = real(psi'*HamC*psi);
+F = real(psi'*HamObj*psi);
 
 
 end
