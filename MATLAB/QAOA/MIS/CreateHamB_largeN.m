@@ -1,6 +1,7 @@
 function HamB = CreateHamB_largeN(stringsLegal, Omega)
 %CreateHamB_largeN generates the Hamiltonian for \sum_i Omega_i*X_i in the
-%           subspace of legal strings (independent sets)
+%           subspace of legal strings (independent sets), should be used
+%           when N is large (N >= 48)
 %
 %   Usage: HamB = CreateHamB_largeN(stringsLegal)
 %        HamB = CreateHamB_largeN(stringsLegal, Omega)

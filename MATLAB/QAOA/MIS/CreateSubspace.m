@@ -4,15 +4,21 @@ function [stringsLegal,vecLegality] = CreateSubspace(N, wGraph)
 % (Rydberg blockade).
 %
 % It uses the Bron-Kerbosch algorithm to find all maximal independent set.
-% It works only for unweighted graphs.
+% It treats all edges as same weight.
 %
 %   [stringsLegal,vecLegality] = CreateSubspace(N, wGraph)
 %
-% input: N is the number of vertex.
-%        wGraph is in the format of (i,j,wij) as columns.
-% output: stringsLegal stores all the legal strings in order.
-%         vecLegality is a vector of 2^N, a nonzero number labels the position
-%            of the legal string in the order specified in stringsLegal.
+% Input:
+%       N = the number of vertex.
+%       wGraph = edge lists, in the format of (i,j) or (i,j,w_ij) as rows.
+% Output: 
+%       stringsLegal = a KxN table indicating all independent sets (legal
+%                     strings)
+%
+%       vecLegality = 2^N x 1 vector, where nonzero numbers occupy the 
+%            independent set states in the original Hilbert space, each 
+%            labelling the row position of the legal string in the order 
+%            specified in the stringsLegal table.
 %
 % WARNING: THIS FUNCTION MAY NOT WORK AS INTENDED WHEN N>=53, since
 %          double has only ~53 bit resolution, so 2^53+1 = 2^53

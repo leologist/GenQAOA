@@ -47,6 +47,8 @@ for ind = 1:N-1
         Vij(ind, ind2) = 1/norm(xy(ind,:) - xy(ind2,:))^alpha;
     end
 end
+
+Vij(Vij > 1) = 1; % ignore interactions within unit radius as those states are not accessible
     
 
 for ind = 1:size(stringsLegal, 1)

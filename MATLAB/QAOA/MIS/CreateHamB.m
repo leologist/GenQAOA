@@ -1,8 +1,22 @@
 function HamB = CreateHamB(stringsLegal, vecLegality, Omega)
-%CreateHamB generates the Hamiltonian for \sum_i Omega_i*s_i^x in the
+%CreateHamB generates the Hamiltonian for \sum_i Omega_i*X_i in the
 %           subspace of legal strings 
 %
-% Omega_i are individual onsite variable strength
+% Usage:
+%   HamB = CreateHamB(stringsLegal, vecLegality)
+%   HamB = CreateHamB(stringsLegal, vecLegality, Omega)
+%
+% Input:
+%   stringsLegal, vecLegality = output of CreateSubspace function
+%       stringsLegal = a KxN table indicating all independent sets (legal
+%                     strings)
+%
+%       vecLegality = 2^N x 1 vector, where nonzero numbers occupy the 
+%            independent set states in the original Hilbert space, each 
+%            labelling the row position of the legal string in the order 
+%            specified in the stringsLegal table.
+%   
+%   Omega = array of individual site coupling strength (default=ones(N,1))
 
 NoString = size(stringsLegal,1);
 N = size(stringsLegal,2);
