@@ -13,6 +13,10 @@ function [stringsLegal,vecLegality] = CreateSubspace(N, wGraph)
 % output: stringsLegal stores all the legal strings in order.
 %         vecLegality is a vector of 2^N, a nonzero number labels the position
 %            of the legal string in the order specified in stringsLegal.
+%
+% WARNING: THIS FUNCTION MAY NOT WORK AS INTENDED WHEN N>=53, since
+%          double has only ~53 bit resolution, so 2^53+1 = 2^53
+%          Use GetIndepedentSets.m instead
 
 if isempty(wGraph)
     adjMat = zeros(N); % no edges
