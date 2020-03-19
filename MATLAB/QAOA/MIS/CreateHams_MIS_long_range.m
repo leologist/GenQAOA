@@ -7,6 +7,7 @@ function [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega
 %  [HamC, HamB] = CreateHams_MIS(xy)
 %  [HamC, HamB] = CreateHams_MIS(xy, alpha)
 %  [HamC, HamB] = CreateHams_MIS(xy, alpha, Omega)
+%  [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega)
 %
 %  Output:
 %   HamC = a vector, corrseponding to diagonal of the Hamiltonian
@@ -15,6 +16,8 @@ function [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega
 %   
 %   HamB = a sparse Hamiltonian matrix from \sum_i Omega_i*X_i
 %                    projected in the constraint subspace
+%
+%   stringsLegal = a table of all independent sets listed by row
 %
 %  Input:
 %   xy = positions of nodes for the unit disk graph
