@@ -24,7 +24,7 @@ EVOL_RYD_OPT_RYD = 3; % evolve with and optimize Rydberg Hamiltonian
 
 [HamC, HamB] = CreateHams_MIS(NNodes, wG);
 
-[HamC_Ryd, ~, independentSets] = CreateHams_MIS_long_range(xy);
+[HamC_Ryd, HamB_Ryd, independentSets] = CreateHams_MIS_long_range(xy);
 
 if experiment_type == EVOL_MIS_OPT_MIS || experiment_type == EVOL_RYD_OPT_MIS
     MISsize = max(HamC);
@@ -75,9 +75,9 @@ for indp = 1:length(myPs)
         case EVOL_MIS_OPT_MIS
             MISQAOA_fun = @(param) MISQAOAGrad(p, HamC, HamB, param);
         case EVOL_RYD_OPT_MIS
-            MISQAOA_fun = @(param) MISQAOAGradExt(p, -HamC, HamC_Ryd, HamB, param);
+            MISQAOA_fun = @(param) MISQAOAGradExt(p, -HamC, HamC_Ryd, HamB_Ryd, param);
         case EVOL_RYD_OPT_RYD
-            MISQAOA_fun = @(param) MISQAOAGrad(p, HamC_Ryd, HamB, param);
+            MISQAOA_fun = @(param) MISQAOAGradExp(p, -HamC_Ryd, HamC_Ryd, HamB_Ryd, param);
         otherwise
             error('Invalid experiment type %d', experiment_type);
     end

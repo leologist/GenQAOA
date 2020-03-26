@@ -43,6 +43,17 @@ stringsLegal = GetIndependentSets(N, wGraph);
 %% build objective function Hamiltonian, constraint to IS subspace
 HamC = sum(stringsLegal,2); % \sum_i n_i
 
+%% build mixing Hamiltonian
+
+if N < 48
+    inds = stringsLegal*2.^(0:N-1)' + 1;
+    vecLegality = sparse(inds, 1, 1:size(stringsLegal, 1), 2^N, 1);    
+    HamB = CreateHamB(stringsLegal, vecLegality, Omega);
+else
+    HamB = CreateHamB_largeN(stringsLegal, Omega);
+end
+
+%% Adding long-range tail
 % pre-computing V_ij for all pairs (i,j) for faster performance
 Vij = zeros(N,N);
 for ind = 1:N-1
@@ -57,15 +68,5 @@ Vij(Vij > 1) = 1; % ignore interactions within unit radius as those states are n
 for ind = 1:size(stringsLegal, 1)
     x = stringsLegal(ind,:);
     HamC(ind) = HamC(ind) - x*Vij*x';
+    HamB(ind, ind) = HamB(ind, ind) + x*Vij*x';
 end
-
-%% build mixing Hamiltonian
-
-if N < 48
-    inds = stringsLegal*2.^(0:N-1)' + 1;
-    vecLegality = sparse(inds, 1, 1:size(stringsLegal, 1), 2^N, 1);    
-    HamB = CreateHamB(stringsLegal, vecLegality, Omega);
-else
-    HamB = CreateHamB_largeN(stringsLegal, Omega);
-end
-
