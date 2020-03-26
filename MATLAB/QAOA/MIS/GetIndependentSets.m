@@ -72,7 +72,7 @@ stringsDecimal(count+1:end) = [];
 stringsDecimal = reshape(stringsDecimal, numCol,[])';
 
 
-stringsDecimal = unique(stringsDecimal, 'row');
+stringsDecimal = unique(stringsDecimal, 'rows');
 numIS = size(stringsDecimal,1);
 
 %%
