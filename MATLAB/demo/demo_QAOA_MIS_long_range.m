@@ -1,12 +1,12 @@
 graph_type = 1; % see below
-experiment_type = 1; % see below
+experiment_type = 2; % see below
 
 figure_index = 11;
 
 
 if graph_type == 1 % sublattice of square lattice
     blockadeRadius = sqrt(5);
-    xy = rand2Dgrid(6, 0.8)/blockadeRadius;
+    xy = rand2Dgrid(5, 0.8)/blockadeRadius;
     NNodes = size(xy, 1);
     [wG, Adj] = UnitDiskGraph(xy);
 elseif graph_type == 2 % random unit disk graph
@@ -75,7 +75,7 @@ for indp = 1:length(myPs)
         case EVOL_MIS_OPT_MIS
             MISQAOA_fun = @(param) MISQAOAGrad(p, HamC, HamB, param);
         case EVOL_RYD_OPT_MIS
-            MISQAOA_fun = @(param) MISQAOAGradExt(p, HamC, HamC_Ryd, HamB, param);
+            MISQAOA_fun = @(param) MISQAOAGradExt(p, -HamC, HamC_Ryd, HamB, param);
         case EVOL_RYD_OPT_RYD
             MISQAOA_fun = @(param) MISQAOAGrad(p, HamC_Ryd, HamB, param);
         otherwise

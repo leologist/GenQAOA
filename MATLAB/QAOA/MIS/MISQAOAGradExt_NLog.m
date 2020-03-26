@@ -1,6 +1,6 @@
-function [F_ave, F_grad, psiout] = MISQAOAGradExt(p, HamObj, HamC, HamB, param)
-%MISQAOAGradExt computes the average value of HamObj found using QAOA 
-%   evolving under HamC and HamB. It also gives the gradient.
+function [F_ave, F_grad, psiout] = MISQAOAGradExt_NLog(p, HamObj, HamC, HamB, param)
+%MISQAOAGradExt_log computes the -log of the average HamObj found using QAOA 
+%   evolving under HamC and HamB. It also gives the gradient of -log<HamObj>.
 %
 %   [F_ave, F_grad, psiout] = MISQAOAGradExt(p,HamObj,HamC,HamB,param)
 %   HamObj is a vector corresponds to objective function in the Z basis
@@ -8,7 +8,7 @@ function [F_ave, F_grad, psiout] = MISQAOAGradExt(p, HamObj, HamC, HamB, param)
 %   HamB is the mixing Hamiltonian in the subspace of independent set
 %       states generated from sigma_x
 %
-% F_ave: the objective function
+% F_ave: negative log(objective function) (for minimization)
 % F_grad: gradient of F_ave with respect to param
 % psiout: output wavefunction
 %
@@ -50,7 +50,9 @@ end
 F_grad(p+1) = psi_p(:,2)'*((1i*HamB)*psi_p(:,2*p+1));
 F_grad(1) = []; % gamma1 is absent
 
-F_grad = 2*real(F_grad); % derivative has two parts 
+% Make them negative for fmincon (minimization)
+F_grad = -2*real(F_grad)/F_ave; % derivative has two parts 
+F_ave = -log(F_ave);
 
 if nargout >= 3
     psiout = psi_p(:, p+1);
