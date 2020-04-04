@@ -1,6 +1,6 @@
 function [edges, AdjMat] = RydbergGraphFromXY(xy, alpha)
 %RYDBERGGRAPHFROMXY create graph from inputted xy coordinates, whose edge
-%   weights are 1/(1+r_ij^alpha) or HeavisideTheta[1-r_ij] if alpha=Inf
+%   weights are 1/r_ij^alpha or HeavisideTheta[1-r_ij] if alpha=Inf
 %   
 %   [edges, AdjMat] = RydbergGraphFromXY(xy)
 %   [edges, AdjMat] = RydbergGraphFromXY(xy, alpha)
@@ -18,8 +18,7 @@ for ind = 1:NNodes
     for ind2 = ind+1:NNodes
         dist = norm(xy(ind,:) - xy(ind2,:));
         if alpha < Inf
-%             temp = 1/dist^alpha;
-            temp = 1/(1+dist^alpha);
+            temp = 1/dist^alpha;
         else
             if dist <= 1
                 temp = 1;
