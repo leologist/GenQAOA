@@ -32,7 +32,7 @@ xy = zeros(Lx*Ly, 2);
 
 for x = 0:Lx-1
     for y = 0:Ly-1
-        xy(x*Lx + y + 1, :) = [x,y];
+        xy(x*Ly + y + 1, :) = [x,y];
     end
 end
 
