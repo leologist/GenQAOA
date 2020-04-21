@@ -1,6 +1,6 @@
-function xy = rand2Dgrid(Ls, fillingFraction)
-%rand2Dgrid generates a set of xy coordinates of nodes in a Lx-by-Ly square
-% lattice with a specified filling fraction
+function xy = rand2Dgrid(Ls, fillingFraction, lattice_function)
+%rand2Dgrid generates a set of xy coordinates of nodes in a Lx-by-Ly
+%   lattice  with a specified filling fraction
 %
 % Usage:
 %   xy = rand2Dgrid(Ls, fillingFraction)
@@ -9,7 +9,10 @@ function xy = rand2Dgrid(Ls, fillingFraction)
 %   Ls = either a tuple [Lx, Ly] or a scalar L (then Lx = Ly = L)
 %        indicating the linear size of the square lattice
 %   fillingFraction = a number between 0 and 1 indicating the percentage of
-%        nodes that are filled
+%        nodes that are filled (default = 1);
+%   lattice_function = (optional) a function @(x, y) that takes two integer
+%          (x,y) and output the positioon the vertex 
+%          (default: lattice_function = @(x,y) [x,y], i.e. square lattice)
 % 
 % Output:
 %   xy = K x 2 matrix of the K nodes in the square lattice, where
@@ -23,6 +26,10 @@ else
     error('Invalid input for Ls')
 end
 
+if nargin < 3
+    lattice_function = @(x,y) [x,y];
+end
+
 if nargin < 2
     fillingFraction = 1; 
 end
@@ -32,7 +39,7 @@ xy = zeros(Lx*Ly, 2);
 
 for x = 0:Lx-1
     for y = 0:Ly-1
-        xy(x*Ly + y + 1, :) = [x,y];
+        xy(x*Ly + y + 1, :) = lattice_function(x,y);
     end
 end
 
