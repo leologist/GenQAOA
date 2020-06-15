@@ -2,10 +2,12 @@ function [F_ave, psi_out] = IsingQAOA(N,p,HamC,param,flagSym)
 %IsingQAOA computes the average value of an Ising objective function HamC
 % running the QAOA algorithm
 %
-%   [F_ave, psi_out] = IsingQAOA(N,p,HamC,param)
+%   [F_ave, psi_out] = IsingQAOA(N, p, HamC, param)
+%   [F_ave, psi_out] = IsingQAOA(N, p, HamC, param, flagSym)
 %
 %	HamC is a vector corresponds to diagonal of the Hamiltonian
-%   flagSym == 1 denotes a flag for considering the Z2 symmetry
+%
+%   flagSym = (default false) denotes a flag for considering the Z2 symmetry
 %   (fix first spin to be 0, and reduce Hilbert space size to half)
 %
 %   First p params are gammas, second p params are betas.

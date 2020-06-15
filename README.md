@@ -4,7 +4,7 @@ GenQAOA is a MATLAB-based library used to study (generalized) quantum approximat
 ## Usage
 
 1) navigate to GenQAOA/MATLAB directory
-2) run the initialize.m script to add subdirectories to MATLAB path
+2) run the initialize.m script to add various subdirectories to MATLAB path
 3) run your script (for example, navigate to GenQAOA/MATLAB/demo and run a demo script)
 
 ### Explanation of library organization

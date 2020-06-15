@@ -1,6 +1,7 @@
 function [edges, AdjMat] = ErdosRenyiGraph(N, p)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
+%ErdosRenyiGraph generate an Erdos-Renyi graph of N vertices and edge
+%   probability p
+%
 
 AdjMat = rand(N,N) <= p;
 AdjMat = triu(AdjMat, 1);
