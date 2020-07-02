@@ -1,10 +1,10 @@
-function [F, psi] = GenQAOA(p, HamObj, param, psi, EvolC, EvolB)
+function [F, psi] = GenQAOA(p, HamC, param, psi, EvolC, EvolB)
 %GenQAOA performs QAOA circuit with general Hamiltonian
 %
 %   [F, psi] = GenQAOA(p, HamC, param, psi, EvolC, EvolB)
 %       N = number of particles
 %       p = QAOA level/depth
-%       HamC = problem Hamiltonian (trying to minimize)
+%       HamC = problem Hamiltonian (trying to minimize) - a matrix
 %       EvolC = @(psi, gamma) ...
 %       EvolB = @(psi, beta) ...
 %       param = 2*p parameter values, i.e. [gammas, betas]
@@ -17,14 +17,14 @@ gammas = param(1:p);
 betas = param(p+1:end);
 
 if isempty(psi)
-    psi = 1/sqrt(length(HamObj))*ones(length(HamObj),1);
+    psi = 1/sqrt(length(HamC))*ones(length(HamC),1);
 end
     
 for ind = 1:p
     psi = EvolB(EvolC(psi, gammas(ind)), betas(ind));
 end
 
-F = real(psi'*HamObj*psi);
+F = real(psi'*HamC*psi);
 
 
 end

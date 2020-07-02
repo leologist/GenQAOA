@@ -21,7 +21,7 @@ if nargin <= 4
         psi_out = exp(-1i*paramC(ind)*HamC).*psi_out;
         psi_out = EvolHamB(N,paramB(ind),psi_out);
     end
-elseif flagSym == 1
+else
     psi_out = 1/sqrt(2^(N-1))*ones(2^(N-1),1);
     for ind = 1:p
         psi_out = exp(-1i*paramC(ind)*HamC).*psi_out;

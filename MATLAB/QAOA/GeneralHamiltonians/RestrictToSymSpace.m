@@ -1,4 +1,4 @@
-function [Hsym, Vsym, Dsym] = RestrictToSymSpace(H, flagSym)
+function [Hsym, Vsym, Dsym] = RestrictToSymSpace(H, symmetry_sector)
 %RestrictToSymSpace compute the symmetric subspace eigenvectors, eigenvalues
 %   and effective Hamiltonian in the input N-qubit Hamiltonian that has Z_2
 %   symmetry with respect to flipping of all spins: [X^{\otimes N}, H]=0
@@ -23,11 +23,11 @@ function [Hsym, Vsym, Dsym] = RestrictToSymSpace(H, flagSym)
 
 
 if nargin < 2
-    flagSym = true;
+    symmetry_sector = true;
 end
 
 
-if flagSym % work in symmetric subspace eig(X^{\otimes N}) = +1
+if symmetry_sector % work in symmetric subspace eig(X^{\otimes N}) = +1
     Hsym = H(1:end/2, 1:end/2) + fliplr(H(1:end/2, end/2+1:end));
 else % work in asymmetric subspace eig(X^{\otimes N}) = -1
     Hsym = H(1:end/2, 1:end/2) - fliplr(H(1:end/2, end/2+1:end));
