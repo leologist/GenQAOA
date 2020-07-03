@@ -43,10 +43,11 @@ for x = 0:Lx-1
     end
 end
 
-N = Lx*Ly;
-xy = xy(randperm(N, round(N*fillingFraction)), :);
+if fillingFraction < 1
+    N = Lx*Ly;
+    xy = xy(randperm(N, round(N*fillingFraction)), :);
+end
 
 
 
 end
-

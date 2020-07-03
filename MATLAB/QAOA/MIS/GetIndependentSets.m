@@ -3,7 +3,7 @@ function stringsLegal = GetIndependentSets(N, wGraph)
 %   sets as a logical array
 %
 %   Usage:
-%   stringsLegal = GetIndependentSets(N, maximalIS)
+%   stringsLegal = GetIndependentSets(N, wGraph)
 %   
 %   Input:
 %       N = number of vertices
