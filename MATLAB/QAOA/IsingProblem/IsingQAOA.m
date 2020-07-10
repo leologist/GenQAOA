@@ -15,7 +15,7 @@ function [F_ave, psi_out] = IsingQAOA(N,p,HamC,param,flagSym)
 
 paramC = param(1:p); paramB = param(p+1:end);
 
-if nargin <= 4
+if nargin <= 4 || ~flagSym
     psi_out = 1/sqrt(2^N)*ones(2^N,1);
     for ind = 1:p
         psi_out = exp(-1i*paramC(ind)*HamC).*psi_out;
