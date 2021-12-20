@@ -1,5 +1,5 @@
 function HamC = CreateHamNNInt(N, wGraph)
-%CreateHamNNInt generate diagonal Hamiltonian H = \sum_{ij} w_ij n_ii n_j
+%CreateHamNNInt generate diagonal Hamiltonian H = \sum_{ij} w_ij n_i n_j
 
 
 numEdges = size(wGraph,1);
@@ -23,7 +23,7 @@ function [out] = kronNz(N,i,j)
 % All other sites have identity spin matrix. 
 
 if i > j
-    out = kron(Nz, j, i);
+    out = kronNz(N, j, i);
     return
 end
 

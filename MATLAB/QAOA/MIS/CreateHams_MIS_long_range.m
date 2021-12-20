@@ -11,11 +11,11 @@ function [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega
 %
 %  Output:
 %   HamC = a vector, corrseponding to diagonal of the Hamiltonian
-%                     \sum_i n_i - \sum_{ij} V_ij n_i n_j
-%                     where V_ij = 1/(r_ij)^alpha
+%                     \sum_i n_i
 %   
-%   HamB = a sparse Hamiltonian matrix from \sum_i Omega_i*X_i
+%   HamB = a sparse Hamiltonian matrix from \sum_i Omega_i*X_i + \sum_{ij} V_ij n_i n_j
 %                    projected in the constraint subspace
+%                     where V_ij = 1/(r_ij)^alpha
 %
 %   stringsLegal = a table of all independent sets listed by row
 %
@@ -62,11 +62,11 @@ for ind = 1:N-1
     end
 end
 
-Vij(Vij > 1) = 1; % ignore interactions within unit radius as those states are not accessible
+% Vij(Vij > 1) = 1; % ignore interactions within unit radius as those states are not accessible
     
 
 for ind = 1:size(stringsLegal, 1)
     x = stringsLegal(ind,:);
-    HamC(ind) = HamC(ind) - x*Vij*x';
+%     HamC(ind) = HamC(ind) - x*Vij*x';
     HamB(ind, ind) = HamB(ind, ind) + x*Vij*x';
 end

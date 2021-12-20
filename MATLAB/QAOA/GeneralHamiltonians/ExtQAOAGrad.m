@@ -3,7 +3,6 @@ function [F, F_grad, psi] = ExtQAOAGrad(p, HamObj, HamC, HamB, param, psi_in, Ev
 %and computes gradient
 %
 %   [F, F_grad] = ExtQAOAGrad(p, HamObj, HamC, HamB, param, psi_in, EvolC, EvolB)
-%       N = number of particles
 %       p = QAOA level/depth
 %       HamObj = objective Hamiltonian (trying to minimize)
 %       HamC = Z-type evolution generator 

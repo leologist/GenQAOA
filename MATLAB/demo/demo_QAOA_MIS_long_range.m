@@ -77,7 +77,7 @@ for indp = 1:length(myPs)
         case EVOL_RYD_OPT_MIS
             MISQAOA_fun = @(param) MISQAOAGradExt(p, -HamC, HamC_Ryd, HamB_Ryd, param);
         case EVOL_RYD_OPT_RYD
-            MISQAOA_fun = @(param) MISQAOAGradExp(p, -HamC_Ryd, HamC_Ryd, HamB_Ryd, param);
+            MISQAOA_fun = @(param) MISQAOAGradExt(p, -HamC_Ryd, HamC_Ryd, HamB_Ryd, param);
         otherwise
             error('Invalid experiment type %d', experiment_type);
     end
