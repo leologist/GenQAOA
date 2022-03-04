@@ -3,7 +3,7 @@ N = 12;
 
 maxP = 50;
 
-figind = 3; % index of figure to plot
+figind = 11; % index of figure to plot
 
 Delta = -3/4; % gapless = -3/4, gapped = -7/4
 
@@ -87,7 +87,7 @@ realTimeEd = nan(maxP, 1);
 outputEd = cell(maxP,1);
 nFuncEvalEd = nan(maxP, 1);
 
-XXZN8 = load('XXZ_n=8_best.mat');
+XXZN8 = load('data/XXZ_n=8_best.mat'); % best known parameters from brute-force search at N=8
 % mySymmetry = '';
 mySymmetry = 'TR+Z2';
 

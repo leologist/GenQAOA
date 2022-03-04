@@ -12,7 +12,7 @@ function [F, F_grad, psi] = MultiQAOAGrad(p, HamObj, EvolHams, params, psi_in, E
 %                   cell array of function handles, same size as EvolHams 
 %               used if there's an implementation more efficient than expmv
 %
-%   F = <psi|HamC|psi>
+%   F = <psi|HamObj|psi>
 %   F_grad = gradient of F with respect to p*K parameters (p x K matrix)
 %   psi = output wavefunction of the circuit
 %
