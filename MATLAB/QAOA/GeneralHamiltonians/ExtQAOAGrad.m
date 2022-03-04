@@ -15,7 +15,7 @@ function [F, F_grad, psi] = ExtQAOAGrad(p, HamObj, HamC, HamB, param, psi_in, Ev
 %       EvolC = @(psi, gamma) ... (default: use Krylov expmv)
 %       EvolB = @(psi, beta) ... (default: use Krylov expmv)
 %
-%   F = <psi|HamC|psi>
+%   F = <psi|HamObj|psi>
 %   F_grad = gradient of F with respect to 2*p parameters
 %
 
