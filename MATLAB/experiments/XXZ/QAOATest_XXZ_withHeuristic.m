@@ -1,5 +1,5 @@
 
-N = 11;
+N = 12;
 
 maxP = 50;
 
@@ -11,7 +11,9 @@ p_threshold_for_guess = 6; % needs to be <= 6
 
 nOverlapsToStore = 3; % number of state overlaps to store
 
-USE_INVERSION_SYM = true;
+ALWAYS_USE_INVERSION_SYM = true;
+
+SAVING_DATA = false;
 
 %% Set up Hamiltonian
 sx = sparse([0,1; 1,0]);
@@ -28,10 +30,9 @@ end
 psi0 = ones(2^N,1)/sqrt(2^N);
 
 tic;
-if N <= 12 && ~USE_INVERSION_SYM
-    [HCsym, Vsym, Dsym] = RestrictToSymSpace(HamC, true);
+if N < 12 && ~ALWAYS_USE_INVERSION_SYM
+    [HCsym, Vsym, Dsym] = RestrictToZ2SymSpace(HamC, true);
     fprintf('Finished diagonalizing after %0.2f sec\n', toc);
-    
     
 %     Vsub = [speye(2^(N-1)); flipud(speye(2^(N-1)))]/sqrt(2);
 %     psi0 = Vsub'*psi0;
@@ -49,7 +50,7 @@ if N <= 12 && ~USE_INVERSION_SYM
 else
     % further reduce Hilbert space size using inversion symmetry
     % (but HamB evolution won't work as nicely)
-    [HCsym, HBsym, Vsub] = RestrictToSymPlusInversion(N, HamC);
+    [HCsym, HBsym, Vsub] = RestrictToZ2SymPlusInversion(N, HamC);
     
     psi0 = Vsub'*psi0;
     
@@ -86,9 +87,9 @@ realTimeEd = nan(maxP, 1);
 outputEd = cell(maxP,1);
 nFuncEvalEd = nan(maxP, 1);
 
-XXZN8 = load('data/XXZ_n=8_best.mat');
-% mySymmetry = 'TR+Z2';
-mySymmetry = '';
+XXZN8 = load('XXZ_n=8_best.mat');
+% mySymmetry = '';
+mySymmetry = 'TR+Z2';
 
 for p = 1:maxP
 
@@ -121,7 +122,7 @@ for p = 1:maxP
                 paramEd{p} = param2;
                 exitflagEd(p) = ef;
                 nFuncEvalEd(p) = op.funcCount;
-                fprintf('\b + improved\n');
+                fprintf('\b + improved, time = %0.2f\n', realTimeEd(p));
             end
             x = x + 1;
         end
@@ -158,6 +159,7 @@ for p = 1:maxP
 end
 
 %%
+
 figure(figind)
 subplot(2,1,1);
 plot(1:maxP, energyEd,'o-');
@@ -168,7 +170,7 @@ xlabel('p');
 ylabel('Energy');
 grid on
 set(gca,'xlim',[1,maxP]);
-title(sprintf('N=%d, using interpolation for p>%d',N, p_threshold_for_guess))
+title(sprintf('N=%d, using interpolation for p>%d',N, p_threshold_for_guess));
 
 subplot(2,1,2);
 plot(1:maxP, overlapsEd,'o-');
@@ -181,7 +183,11 @@ xlabel('p');
 ylabel('eigenstates population');
 set(gca,'xlim',[1,maxP]);
 set(gca,'ylim',[0,1]);
+legend('GS','1E','2E');
+
 
 %%
 
-save(sprintf('data/n=%d_Ed.mat',N), 'maxP','energyEd','overlapsEd','paramEd', 'exitflagEd', 'realTimeEd','nFuncEvalEd');
+if SAVING_DATA
+    save(sprintf('data/n=%d_Ed.mat',N), 'maxP','energyEd','overlapsEd','paramEd', 'exitflagEd', 'realTimeEd','nFuncEvalEd', 'E_GS','E_1E');
+end

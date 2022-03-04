@@ -1,8 +1,8 @@
-function [HCsym, HBsym, Vsub] = RestrictToSymPlusInversion(N, HamC)
-%RestrictToSymPlusInversion compute HamC and HamB in symmetric subspace 
+function [HCsym, HBsym, Vsub] = RestrictToZ2SymPlusInversion(N, HamC)
+%RestrictToZ2SymPlusInversion compute HamC and HamB in symmetric subspace 
 %   obeying both Z_2 (X^{\otimes N}) and inversion symmetry
 %
-%   [HCsym, HBsym, Vsub] = RestrictToSymPlusInversion(N, HamC)
+%   [HCsym, HBsym, Vsub] = RestrictToZ2SymPlusInversion(N, HamC)
 %   
 %   HCsym and HBsym are HamC and HamB restricted to symmetric subspace
 %       note dimension of symmetric subspace is

@@ -1,11 +1,11 @@
-function [Hsym, Vsym, Dsym] = RestrictToSymSpace(H, symmetry_sector)
-%RestrictToSymSpace compute the symmetric subspace eigenvectors, eigenvalues
+function [Hsym, Vsym, Dsym] = RestrictToZ2SymSpace(H, symmetry_sector)
+%RestrictToZ2SymSpace compute the symmetric subspace eigenvectors, eigenvalues
 %   and effective Hamiltonian in the input N-qubit Hamiltonian that has Z_2
 %   symmetry with respect to flipping of all spins: [X^{\otimes N}, H]=0
 %
 %   Usage:
-%       Hsym = RestrictToSymSpace(H)
-%       [Hsym, Vsym, Dsym] = RestrictToSymSpace(H)
+%       Hsym = RestrictToZ2SymSpace(H)
+%       [Hsym, Vsym, Dsym] = RestrictToZ2SymSpace(H)
 %
 %   Hsym, Vsym are 2^{N-1}-dimensional matrices,
 %   and Dsym is 2^{N-1} x 1 vector of eigenvalues
