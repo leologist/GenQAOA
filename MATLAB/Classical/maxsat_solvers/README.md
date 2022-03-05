@@ -1,10 +1,10 @@
 # maxsat_solvers
 
-This directory contains implementation of state-of-the-art classical algorithms for solving (weighted) (partial) MaxSAT.
+This directory contains implementations of state-of-the-art classical algorithms for solving (weighted) (partial) MaxSAT.
 
 ## MaxSAT Problem
-MaxSAT is the problem of given a CNF formula, which is a conjunction of many clauses (an AND of ORs), find an assignment that satisfy the maximum number of clauses possible.
-A example CNF: (x_1 OR ~x_2) AND (x_2 OR x_3 OR ~x4) OR (~x_1 OR  ~x_3) AND ...
+MaxSAT is the following problem: Given a CNF formula, which is a conjunction of many clauses (i.e., an AND of ORs), find an assignment that satisfies the maximum number of clauses possible.
+An example CNF: (x_1 OR ~x_2) AND (x_2 OR x_3 OR ~x4) AND (~x_1 OR  ~x_3) AND ...
 
 Weighted MaxSAT assigns a weight to each clause, and find an assignment that maximizes the total weight of clauses satisfied.
 
