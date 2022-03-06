@@ -8,33 +8,35 @@ if TRY_RING % Look at the N-vertex ring graph
     Adj = circshift(eye(N),1);
     [r,c] = find(Adj);
     J = [r,c, -ones(size(r))];
+    wG = [r,c];
+
     Adj = Adj + Adj';
-    
-    aZ = 1+mod(1:N,2);
 
 else % Create a 3-regular graph
     [wG, Adj] = randRegGraph(N,3);
 
-    HC = CreateHamC_MaxCut(N, wG);
 
-    Ixs = find(HC == max(HC));
-    Ix = Ixs(randi(length(Ixs)));
-    aZ = 1+ flip(de2bi(Ix-1,N));
-    
     J = [wG, -ones(size(wG,1))];
 end
 
 
+% Find MaxCut to help inform the choice of the Z-type driver
+
+HC = CreateHamC_MaxCut(N, wG);clc
+MaxCut = max(HC);
+MaxCut_degen = nnz(HC==MaxCut);
+
+Ixs = find(HC == MaxCut);
+Ix = Ixs(randi(length(Ixs)));
+aZ = 1+ flip(de2bi(Ix-1,N));
+
+hZ = (-1).^aZ;
 
 figure(2)
 plot(graph(Adj));
 
-hZ = (-1).^aZ;
-
-MaxCut = max(HC);
-
 fprintf('*** N=%d\n', N);
-fprintf('    MaxCut = %d, degen = %d\n', MaxCut, nnz(HC==MaxCut));
+fprintf('    MaxCut = %d, degen = %d\n', MaxCut, MaxCut_degen);
 fprintf('    Using hZ with cut value = %d\n', (sum(Adj(:)) - hZ*Adj*hZ')/4);
 
 
