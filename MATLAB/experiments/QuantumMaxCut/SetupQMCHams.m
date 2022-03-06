@@ -2,22 +2,22 @@ function [QAOAhelperfcn, HamObj, ...
     HamC, HamZ, HamB, EvolC, EvolZ, EvolB] =  SetupQMCHams(N, J, h)
 %SetupQMCHams sets up the Hamiltonians and evolution functions for QAOA
 %           in one-dimension using ZZ, Z, and X-type driver to optimize the
-%           XXZ Hamiltonian
+%           Quantum MaxCut Hamiltonian problem
 %
 %   Arguments: 
 %       N = system size
 %       J = an |E|x3 array of edges and weights whos rows are [i, j, J_ij]
 %       h = a |V|x1 array specifying coefficient in the Z driver
 %                   so that HamZ = \sum_i h_i Z_i as driver,
-%            [] (empty) if using \sum_i Z_i as driver
+%            (default or [] (empty) if using \sum_i Z_i as driver)
 %
 %   Returns:
 %       QAOAhelperfcn = @(p, param) an evolution function based on
 %                       MultiQAOAGrad, returns <HamObj> and its gradient
 %                       for a given p and a set of parameters param
 %       HamObj = the XXZ objective Hamiltonian, which is
-%                \sum_{i=1}^{n-1} (XX + YY + Delta*ZZ)_{i,i+1}
-%       HamC = ZZ-type driver (potentially has long-range interaction)
+%                \sum_ij J_ij/2 * (1 - XX - YY - ZZ)_{i,j}
+%       HamC = ZZ-type driver (\sum_ij J_ij Z_i Z_j)
 %       HamZ = Z-type driver (\sum_i h_i Z_i)
 %       HamB = X-type driver (\sum_i X_i)
 %       EvolC = @(psi, gamma) evolves a given psi by exp(-1i*gamma*HamC)
@@ -39,9 +39,7 @@ for ind = 1:size(J, 1)
     Ib = J(ind, 2);
     HamObj = HamObj + J(ind,3)/2 * (speye(2^N) - Ham2LTerm(sx, sx, Ia, Ib, N) -...
         Ham2LTerm(sy, sy, Ia, Ib, N) - Ham2LTerm(sz, sz, Ia, Ib, N));
-%     HamObj = HamObj + J(ind,3)/2 * (speye(2^N) - Ham2LTerm(sz, sz, Ia, Ib, N));
 end
-
 
 
 % ZZ driver
