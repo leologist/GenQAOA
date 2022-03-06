@@ -18,7 +18,7 @@ else % Create a 3-regular graph
     HC = CreateHamC_MaxCut(N, wG);
 
     Ixs = find(HC == max(HC));
-    Ix = Ixs(randi(length(Ix)));
+    Ix = Ixs(randi(length(Ixs)));
     aZ = 1+ flip(de2bi(Ix-1,N));
     
     J = [wG, -ones(size(wG,1))];
