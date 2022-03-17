@@ -35,23 +35,24 @@ sz = sparse(diag([1,-1]));
 HamObj = sparse(0);
 
 for ind = 1:size(J, 1)
-    Ia = J(ind,1);
+    Ia = J(ind, 1);
     Ib = J(ind, 2);
     HamObj = HamObj + J(ind,3)/2 * (speye(2^N) - Ham2LTerm(sx, sx, Ia, Ib, N) -...
         Ham2LTerm(sy, sy, Ia, Ib, N) - Ham2LTerm(sz, sz, Ia, Ib, N));
 end
 
+% X driver
+HamB = krondist(sx, N);
 
 % ZZ driver
-
 HamC = sparse(0);
-
 for ind = 1:size(J,1)
     Ia = J(ind,1);
     Ib = J(ind,2);
     HamC = HamC + J(ind, 3) * Ham2LTerm(sz, sz, Ia, Ib, N);
 end
 
+% Z driver
 if nargin <= 2 || isempty(h)
     HamZ = krondist(sz, N);
 else
@@ -59,7 +60,6 @@ else
 end
 
 
-HamB = krondist(sx, N);
 HamZdiag = full(diag(HamZ));
 HamCdiag = full(diag(HamC));
 
@@ -70,3 +70,4 @@ EvolZ = @(psi, alpha) exp(-1i*alpha*HamZdiag).*psi;
 psi0 = ones(2^N,1)/sqrt(2^N);
 
 QAOAhelperfcn = @(p, param) MultiQAOAGrad(p, HamObj, {HamC, HamZ, HamB}, param, psi0, {EvolC, EvolZ, EvolB});
+

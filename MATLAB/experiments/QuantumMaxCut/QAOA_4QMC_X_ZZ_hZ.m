@@ -22,7 +22,7 @@ end
 
 % Find MaxCut to help inform the choice of the Z-type driver
 
-HC = CreateHamC_MaxCut(N, wG);clc
+HC = CreateHamC_MaxCut(N, wG);
 MaxCut = max(HC);
 MaxCut_degen = nnz(HC==MaxCut);
 
@@ -32,7 +32,7 @@ aZ = 1+ flip(de2bi(Ix-1,N));
 
 hZ = (-1).^aZ;
 
-figure(2)
+figure(1);
 plot(graph(Adj));
 
 fprintf('*** N=%d\n', N);
@@ -40,7 +40,17 @@ fprintf('    MaxCut = %d, degen = %d\n', MaxCut, MaxCut_degen);
 fprintf('    Using hZ with cut value = %d\n', (sum(Adj(:)) - hZ*Adj*hZ')/4);
 
 
-%%
+%% pauli matrices and total angular momentum operators
+
+sx = sparse([0,1; 1,0]);
+sy = sparse([0,-1i; 1i, 0]);
+sz = sparse(diag([1,-1]));
+Jx = krondist(sx, N)/2;
+Jy = krondist(sy, N)/2;
+Jz = krondist(sz, N)/2;
+Jtot = (Jx^2+Jy^2+Jz^2);
+
+%% Setup QAOA
 
 [QAOAhelperfcn, HamObj, HamC, HamZ, HamB, EvolC, EvolZ, EvolB] = SetupQMCHams(N, J, hZ);
 
@@ -53,16 +63,12 @@ I_GS = D <= D(1)+1e-10;
 QMC_degen = nnz(I_GS);
 
 fprintf('Quantum MaxCut value\n')
-fprintf('E0 = %0.6f (degen = %d)\nE1 = %0.6f\n', D(1),QMC_degen, D(QMC_degen+1));
+fprintf('E0 = %0.6f (degen = %d, J^2 = %0.2f)\n', D(1), QMC_degen, V(:,1)'*Jtot*V(:,1));
+fprintf('E1 = %0.6f (J^2 = %0.2f)\n',  D(QMC_degen+1), V(:,QMC_degen+1)'*Jtot*V(:,QMC_degen+1))
 
-%%
-sx = sparse([0,1; 1,0]);
-sy = sparse([0,-1i; 1i, 0]);
-sz = sparse(diag([1,-1]));
-allX = kronrec(sx, N);
-allZ = kronrec(sz, N);
 
-%%
+%% Running and optimizing QAOA
+
 p = 10;
 
 param0 = 2*rand(p,3)-1;
@@ -70,7 +76,7 @@ param0 = 2*rand(p,3)-1;
 myfun = @(param) QAOAhelperfcn(p, param);
 
 options = optimoptions('fminunc','GradObj','on','Hessian','off','Display','off',...
-    'TolX',1e-5,'TolFun',1e-5, 'Algorithm', 'quasi-newton','PlotFcns',{@optimplotfval, @optimplotstepsize},...
+    'TolX',1e-5,'TolFun',1e-5, 'Algorithm', 'quasi-newton','PlotFcn',{@optimplotfval, @optimplotstepsize},...
     'MaxFunEvals', Inf, 'MaxIter', Inf);
 
 [x, fval] = fminunc(myfun, param0, options);
@@ -80,7 +86,8 @@ options = optimoptions('fminunc','GradObj','on','Hessian','off','Display','off',
 fprintf('QAOA fval = %0.6f @ p=%d\n', fval, p);
 fprintf('\t P_GS = %0.4e \n', sum(abs(psiQAOA'*V(:,I_GS)).^2));
 
-%%
+%% Setting up AGM ansatz (see arXiv:2003.14394)
+
 zs = {[0;1],[1;0]};
 
 psi0 = 1;
@@ -102,9 +109,11 @@ for ind = 1:size(J,1)
 end
 
 
-%%
+%% Running and optimizing the AGM ansatz for comparison
+
 yfun = @(t) AGM_ansatz(N, HamObj, HamYX, t, psi0, J, aZ, paulis);
 
+options.PlotFcns = {};
 [theta, fval2] = fminunc(yfun, rand*pi, options);
 
 [F2, Fg2, psi_AGM] = AGM_ansatz(N, HamObj, HamYX, theta, psi0, J, aZ, paulis);
