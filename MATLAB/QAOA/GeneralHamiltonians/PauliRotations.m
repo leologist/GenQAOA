@@ -1,4 +1,4 @@
-function psi_out = PauliRotations(N, beta, axes, psi_in)
+function psi_out = PauliRotations(N, beta, rot_axes, psi_in)
 %PauliRotations efficiently computes exp(-1i*beta* \sum_i sigma_i)*psi_in, 
 %                taking advantage of the fact that sigma_i^2 = 1
 %
@@ -11,15 +11,16 @@ function psi_out = PauliRotations(N, beta, axes, psi_in)
 %   Arguments:
 %       N = system size
 %       beta = rotation angle
-%       axes = an Nx3 matrix specifying rotation axes (n_X, n
+%       axes = an Nx3 matrix specifying rotation axes (n_X, n_Y, n_Z) for
+%              each qubit
 %       psi_in = the input wavefunction (2^N dimensional complex vector)
 %
 
 for ind = 1:N
     psi_in = cos(beta)*psi_in - 1i*sin(beta)* ...
-        (axes(ind, 1) * MultSingleSpin(psi_in,N,ind,1) ...
-        + axes(ind, 2) * MultSingleSpin(psi_in,N,ind,2) ...
-        + axes(ind, 3) * MultSingleSpin(psi_in,N,ind,3));
+        (rot_axes(ind, 1) * MultSingleSpin(psi_in,N,ind,1) ...
+        + rot_axes(ind, 2) * MultSingleSpin(psi_in,N,ind,2) ...
+        + rot_axes(ind, 3) * MultSingleSpin(psi_in,N,ind,3));
 end
 
 psi_out = psi_in;
