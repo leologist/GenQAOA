@@ -4,9 +4,9 @@ function [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega
 %  (independent sets) on a Unit Disk graph
 %
 %  Usage:
-%  [HamC, HamB] = CreateHams_MIS(xy)
-%  [HamC, HamB] = CreateHams_MIS(xy, alpha)
-%  [HamC, HamB] = CreateHams_MIS(xy, alpha, Omega)
+%  [HamC, HamB] = CreateHams_MIS_long_range(xy)
+%  [HamC, HamB] = CreateHams_MIS_long_range(xy, alpha)
+%  [HamC, HamB] = CreateHams_MIS_long_range(xy, alpha, Omega)
 %  [HamC, HamB, stringsLegal] = CreateHams_MIS_long_range(xy, alpha, Omega)
 %
 %  Output:
@@ -65,8 +65,9 @@ end
 % Vij(Vij > 1) = 1; % ignore interactions within unit radius as those states are not accessible
     
 
-for ind = 1:size(stringsLegal, 1)
-    x = stringsLegal(ind,:);
-%     HamC(ind) = HamC(ind) - x*Vij*x';
-    HamB(ind, ind) = HamB(ind, ind) + x*Vij*x';
+dimH = length(HamC);
+
+V_Ryd = sum((stringsLegal*Vij).*stringsLegal,2);
+HamB = HamB + spdiags(V_Ryd, 0, dimH, dimH);
+
 end

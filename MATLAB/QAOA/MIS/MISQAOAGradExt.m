@@ -3,7 +3,8 @@ function [F_ave, F_grad, psiout] = MISQAOAGradExt(p, HamObj, HamC, HamB, param)
 %   evolving under HamC and HamB. It also gives the gradient.
 %
 %   [F_ave, F_grad, psiout] = MISQAOAGradExt(p,HamObj,HamC,HamB,param)
-%   HamObj is a vector corresponds to objective function in the Z basis
+%   HamObj is the objective Hamiltonian (for minimizing) which can be a
+%           vector or a matrix
 %   HamC is a vector corresponding to the driver in the Z basis
 %   HamB is the mixing Hamiltonian in the subspace of independent set
 %       states generated from sigma_x
@@ -33,8 +34,14 @@ for ind = 2:p
     psi_p(:,ind+1) = EvolHamB(-1i*paramB(ind),HamB,psi_temp);
 end
 
-% psi after each cycle, after HamC, next p steps
-psi_p(:,p+2) = HamObj.*psi_p(:,p+1); % psi_Mid
+% Apply HamObj
+if size(HamObj, 2) == 1
+    psi_p(:,p+2) = HamObj.*psi_p(:,p+1); % psi_Mid
+else
+    psi_p(:,p+2) = HamObj*psi_p(:,p+1); % psi_Mid
+end
+
+% psi after each cycle, after HamObj, next p steps
 for ind = 1:p-1
     psi_temp = EvolHamB(-1i*-paramB(p+1-ind),HamB,psi_p(:,ind+p+1));
     psi_p(:,ind+p+2)= exp(1i*paramC(p+1-ind)*HamC).*psi_temp;
