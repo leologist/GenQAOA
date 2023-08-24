@@ -1,4 +1,4 @@
-function [F_ave, F_grad] = IsingQAOAGrad(N,p,HamC,param,flagSym)
+function [F_ave, F_grad, psi] = IsingQAOAGrad(N,p,HamC,param,flagSym,psi_in)
 %IsingQAOAGrad computes the average value of an Ising objective function HamC
 % running the QAOA algorithm, as well as the gradient with respect to
 % parameters
@@ -19,15 +19,19 @@ function [F_ave, F_grad] = IsingQAOAGrad(N,p,HamC,param,flagSym)
 paramC = param(1:p); paramB = param(p+1:2*p);
 F_grad = zeros(numel(param),1);
 
-if nargin <= 4  % Z2 symmetry flag
+if nargin <= 4  % no Z2 symmetry flag
     flagSym = false;
 end
 
 if ~flagSym
-    psi_in = 1/sqrt(2^N)*ones(2^N,1);
+    if nargin <= 5
+        psi_in = 1/sqrt(2^N)*ones(2^N,1);
+    end
     EvolHamBLocal = @(N,beta,psi_in) EvolHamB(N,beta,psi_in);
 else
-    psi_in = 1/sqrt(2^(N-1))*ones(2^(N-1),1);
+    if nargin <= 5
+        psi_in = 1/sqrt(2^(N-1))*ones(2^(N-1),1);
+    end
     EvolHamBLocal = @(N,beta,psi_in) EvolHamB(N,beta,psi_in,flagSym);
 end
 
@@ -41,6 +45,7 @@ for ind = 1:p
     psi_p(:,ind+1) = EvolHamBLocal(N,paramB(ind),psi_temp);
 end
 
+psi = psi_p(:,p+1);
 % psi after each cycle, after HamC, next p steps
 psi_p(:,p+2) = HamC.*psi_p(:,p+1); % psi_Mid
 for ind = 1:p

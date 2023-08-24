@@ -1,4 +1,4 @@
-function [edges, AdjMat] = FrustratedClusterGraph(n, a, b)
+function [edges, AdjMat] = FrustratedClusterGraph(n, a, b, randomize)
 %FrustratedClusterGraph generate a frustrated cluster graph that should be
 %bad for simulated annealing approach to find MAXCUT
 %   [edges, AdjMat] = FrustratedClusterGraph(n, a, b)
@@ -12,6 +12,10 @@ function [edges, AdjMat] = FrustratedClusterGraph(n, a, b)
 %   This is bad for simulated annealing because there are two local maxmima
 %   of MAXCUT objective function separated by large Hamming distance.
 
+if nargin <= 3
+    randomize = false;
+end
+
 AdjMat = zeros(4*n);
 
 for ind = 1:n
@@ -21,12 +25,24 @@ for ind = 1:n
     end
 end
 
+% pairings = nchoosek(1:n,2);
+[p1,p2] = meshgrid(1:n,1:n);
+pairings = [p1(:), p2(:)];
+if randomize
+    pairings = pairings(randperm(size(pairings,1)),:);
+end
+
 for ind = 1:a
-    AdjMat(ind, 2*n+ind) = 1;
+    AdjMat(pairings(ind,1), 2*n+pairings(ind,2)) = 1;
+end
+
+if randomize
+    pairings = pairings(randperm(size(pairings,1)),:);
 end
 
 for ind = 1:b
-    AdjMat(ind, 3*n+ind) = 1;
+%     AdjMat(ind, 3*n+ind) = 1;
+    AdjMat(pairings(ind,1), 3*n+pairings(ind,2)) = 1;
 end
 
 [row, col] = find(AdjMat);
